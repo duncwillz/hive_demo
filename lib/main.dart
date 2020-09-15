@@ -74,57 +74,55 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
 
       body: Center(
-          child: GridView.count(
+          child: GridView.builder(
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 200,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          childAspectRatio: 1,
+        ),
+        itemBuilder: (context, item) {
+          return Container(
+            child: GestureDetector(
+                onTap: () {
+                  //Navigate to the Page you have
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ItemDetailPage(
+                        category: viewModel.categories[item],
+                      ),
+                    ),
+                  );
+                },
+                child: Card(
+                  elevation: 2,
+                  margin: EdgeInsets.all(5.0),
+                  //color: Colors.cyan[100],
+                  shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(20.0)),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        getIconData(viewModel.categories[item].iconName),
+                        size: 90,
+                      ),
+                      SizedBox(height: 20),
+                      Text(viewModel.categories[item].name,
+                          style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center),
+                    ],
+                  ),
+                )),
+          );
+        },
+        itemCount: viewModel.categories.length,
         primary: false,
         padding: const EdgeInsets.all(20),
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        crossAxisCount: 2,
-        childAspectRatio: 1,
-        children: viewModel.categories
-            .map(
-              (category) => Container(
-                //  color: Colors.cyan[100],
-                child: GestureDetector(
-                    onTap: () {
-                      //Navigate to the Page you have
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => ItemDetailPage(
-                            category: category,
-                          ),
-                        ),
-                      );
-                    },
-                    child: Card(
-                      elevation: 2,
-                      margin: EdgeInsets.all(5.0),
-                      //color: Colors.cyan[100],
-                      shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(20.0)),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(
-                            IconData(
-                                int.parse('0x${category.iconName ?? "e800"}'),
-                                fontFamily: InventoryCustomIcons.kFontFam),
-                            size: 90,
-                          ),
-                          SizedBox(height: 20),
-                          Text(category.name,
-                              style: TextStyle(
-                                  color: Colors.blue,
-                                  fontSize: 14.0,
-                                  fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center),
-                        ],
-                      ),
-                    )),
-              ),
-            )
-            .toList(),
       )),
 
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
@@ -136,7 +134,9 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () {
           debugPrint("Add New Device Category");
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return AddCategory();
+            return AddCategory(
+              viewModel: viewModel,
+            );
           })); //
         },
         tooltip: 'Add Device Cattegorry',
@@ -161,4 +161,19 @@ class _MyHomePageState extends State<MyHomePage> {
       //
     );
   }
+
+  getIconData(String iconName) {
+    try {
+      return iconData[iconData.keys.firstWhere((key) => key == iconName)];
+    } catch (e) {
+      return Icons.star;
+    }
+  }
 }
+
+Map<String, IconData> iconData = {
+  "Smartphone": Icons.smartphone,
+  "TV": Icons.tv,
+  "Computers": Icons.computer,
+  "Home Appliances": Icons.home,
+};

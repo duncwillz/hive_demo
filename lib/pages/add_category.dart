@@ -7,8 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
+import '../main.dart';
+
 class AddCategory extends StatefulWidget {
-  AddCategory({Key key}) : super(key: key);
+  ViewModel viewModel;
+  AddCategory({Key key, this.viewModel}) : super(key: key);
   @override
   _AddCategoryState createState() => _AddCategoryState();
 }
@@ -66,46 +69,33 @@ class _AddCategoryState extends State<AddCategory> {
                           dropdownValue = newValue;
                         });
                       },
-                      items: <String>[
-                        // You can add a lot of icon data here
-
-                        "e800",
-                        "e801"
-                      ].map<DropdownMenuItem<String>>((String value) {
+                      items: iconData.keys
+                          .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
-                          value: value,
-                          child: Icon(IconData(int.parse('0x$value'),
-                              fontFamily: InventoryCustomIcons.kFontFam)),
-                        );
+                            value: value, child: Text(value));
                       }).toList(),
                     ),
                   ),
                 ),
                 SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ChangeNotifierProvider<ViewModel>(
-                    create: (context) => ViewModel(),
-                    child: Consumer<ViewModel>(
-                      builder: (_, model, __) => RaisedButton(
-                        onPressed: () {
-                          if (controller.text.isNotEmpty ||
-                              dropdownValue == null) {
-                            setState(() {
-                              var category = Category()
-                                ..id = Uuid().toString()
-                                ..name = controller.text.trim()
-                                ..iconName = dropdownValue.toString();
-                              model.addCategory(category);
-                            });
-                            Navigator.pop(context);
-                          }
-                        },
-                        child: Text("Add"),
-                      ),
-                    ),
-                  ),
-                )
+                    width: double.infinity,
+                    height: 50,
+                    child: RaisedButton(
+                      onPressed: () {
+                        if (controller.text.isNotEmpty ||
+                            dropdownValue == null) {
+                          setState(() {
+                            var category = Category()
+                              ..id = Uuid().toString()
+                              ..name = controller.text.trim()
+                              ..iconName = dropdownValue.toString();
+                            widget.viewModel.addCategory(category);
+                          });
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: Text("Add"),
+                    ))
               ],
             ))));
   }

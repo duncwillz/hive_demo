@@ -22,9 +22,11 @@ class ViewModel extends ChangeNotifier {
   }
 
   addCategory(Category category) async {
+    print(categories.length);
     var box = await Hive.openBox<Category>(categoryBox);
     await box.add(category);
     categories = box.values.toList();
+    print(categories.length);
     notifyListeners();
   }
 
