@@ -12,8 +12,6 @@ class ViewModel extends ChangeNotifier {
   Item item;
 
   initHive() async {
-    final dir = await getApplicationDocumentsDirectory();
-    Hive.init(dir.path);
     await getAllCategories();
   }
 
